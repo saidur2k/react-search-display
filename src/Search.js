@@ -6,12 +6,11 @@ export default class Search extends Component {
       <form onSubmit={this.props.handleSubmit}>
         <input
           type="text"
-          value={this.props.searchQuery}
+          value={this.props.searchQueryChange}
           onChange={this.props.handleChange}
         />
         <button>Search</button>
       </form>
-
     )
   }
 }

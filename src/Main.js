@@ -15,7 +15,8 @@ function json(response) {
   return response.json()
 }
 
-function getUsers() {
+function getUsers(input) {
+  console.log('getUsers input', input)
   var url = 'https://jsonplaceholder.typicode.com/users'
   return fetch(url)
     .then(status)
@@ -27,41 +28,41 @@ export default class Main extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      searchQuery: '',
+      searchQueryChange: '',
+      searchQuerySubmit: '',
       searchResult: [{email: '', name: ''}]
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.searchQueryChange === nextState.searchQuerySubmit) {
+      return true
+    }
+    return false
+  }
+
   handleChange(event) {
-    this.setState({searchQuery: event.target.value})
+    this.setState({searchQueryChange: event.target.value})
   }
 
   handleSubmit(e) {
     e.preventDefault()
-    const users = getUsers();
-    console.log('handleSubmit', users)
-    this.setState({ searchResult: users})
+    this.setState({searchQuerySubmit: this.state.searchQueryChange})
   }
 
   render () {
     return (
       <div>
         <Search
-          searchQuery={this.state.searchQuery}
+          searchQuery={this.state.searchQueryChange}
           handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
         />
         <Async
-         pendingRender={
-           <div className="empty empty-small">
-             <div className="loading" />
-             <p className="empty-title">Searching</p>
-           </div>
-         }
-         promise={getUsers(this.state.searchQuery)}
-         then={(val) => <Results data={val} />}
+          promise={getUsers(this.state.searchQueryChange)}
+          then={(val) => <Results data={val} />}
         />
       </div>
     )
